@@ -18,7 +18,7 @@ public class EmpireService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Messenger messenger = intent.getParcelableExtra("EmperialMessenger");
+        Messenger messenger = intent.getParcelableExtra("ImperialMessenger");
         EmpireServiceCommands command = (EmpireServiceCommands) intent.getExtras()
                 .get("Command type");
 
