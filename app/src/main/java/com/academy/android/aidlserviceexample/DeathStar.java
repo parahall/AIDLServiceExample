@@ -5,11 +5,32 @@ import android.os.Parcelable;
 
 public class DeathStar implements Parcelable {
 
+    public static final Parcelable.Creator<DeathStar> CREATOR
+            = new Parcelable.Creator<DeathStar>() {
+        public DeathStar createFromParcel(Parcel source) {
+            return new DeathStar(source.readInt(), source.readInt(), source.readString());
+        }
+
+        public DeathStar[] newArray(int size) {
+            return new DeathStar[size];
+        }
+    };
+
     private int width;
 
     private int height;
 
     private String BFG;
+
+    public DeathStar() {
+
+    }
+
+    public DeathStar(int height, int width, String BFG) {
+        this.height = height;
+        this.width = width;
+        this.BFG = BFG;
+    }
 
     public int getWidth() {
         return width;
@@ -47,26 +68,11 @@ public class DeathStar implements Parcelable {
         dest.writeString(this.BFG);
     }
 
-    public DeathStar(int height, int width, String BFG) {
-        this.height = height;
-        this.width = width;
-        this.BFG = BFG;
-    }
-
-    protected DeathStar(Parcel in) {
+    public void readFromParcel(Parcel in) {
         this.width = in.readInt();
         this.height = in.readInt();
         this.BFG = in.readString();
     }
 
-    public static final Parcelable.Creator<DeathStar> CREATOR
-            = new Parcelable.Creator<DeathStar>() {
-        public DeathStar createFromParcel(Parcel source) {
-            return new DeathStar(source);
-        }
 
-        public DeathStar[] newArray(int size) {
-            return new DeathStar[size];
-        }
-    };
 }
