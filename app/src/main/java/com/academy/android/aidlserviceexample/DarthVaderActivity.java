@@ -56,14 +56,14 @@ public class DarthVaderActivity extends Activity implements View.OnClickListener
                         EmpireService.EmpireServiceCommands.FIND_LUKE);
                 break;
         }
-        mStartedCommandTime = System.currentTimeMillis();
+        Log.d(TAG, "Started at: "+System.currentTimeMillis());
         startService(intent);
     }
 
     public class EmpireServiceReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(TAG,"Time took: " +String.valueOf(System.currentTimeMillis()- mStartedCommandTime));
+            Log.d(TAG, "Arrived from service: "+System.currentTimeMillis());
             Toast.makeText(DarthVaderActivity.this, "Death Star deployed and ready for your command, my lord",
                     Toast.LENGTH_LONG).show();
         }
