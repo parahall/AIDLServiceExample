@@ -33,7 +33,9 @@ public class DarthVaderActivity extends Activity implements View.OnClickListener
     @Override
     protected void onResume() {
         super.onResume();
-        if (!super.bindService(new Intent(this, EmpireService.class), this, BIND_AUTO_CREATE)) {
+        final boolean isServiceBounded = super.bindService(new Intent(this, EmpireService.class),
+                this, BIND_AUTO_CREATE);
+        if (!isServiceBounded) {
             Log.w(TAG, "Failed to bind to service");
         }
     }
@@ -47,7 +49,6 @@ public class DarthVaderActivity extends Activity implements View.OnClickListener
     public void onServiceDisconnected(ComponentName name) {
         this.service = null;
     }
-
 
 
     @Override
@@ -71,7 +72,10 @@ public class DarthVaderActivity extends Activity implements View.OnClickListener
                     });
                     break;
                 case R.id.iv_dva_build_death_star:
-                    String buildDeathStar = service.buildDeathStar(new DeathStar());
+                    DeathStar deathStar = new DeathStar();
+                    final String reply = service.buildDeathStar(deathStar);
+                    String buildDeathStar = String
+                            .format("%s and it have %s", reply, deathStar.getBFG());
                     Toast.makeText(this, buildDeathStar, Toast.LENGTH_LONG).show();
                     break;
 

@@ -16,7 +16,9 @@ public class IStarWarsImplementation extends IStarWars.Stub {
                 e.printStackTrace();
             }
         }
-        deathStar = new DeathStar(270000, 270000, "THIS IS THE BIG GUN");
+        deathStar.setBFG("THIS IS THE BIG GUN");
+        deathStar.setHeight(270000);
+        deathStar.setWidth(270000);
         return "Death Star deployed and ready for your command, my lord";
     }
 
