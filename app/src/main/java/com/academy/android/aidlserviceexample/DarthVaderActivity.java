@@ -1,44 +1,23 @@
 package com.academy.android.aidlserviceexample;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Messenger;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
-import java.lang.ref.WeakReference;
 
 
 public class DarthVaderActivity extends Activity implements View.OnClickListener {
 
     private static final String TAG = DarthVaderActivity.class.getSimpleName();
 
-    private static long mStartedCommand;
+    private static long mStartedCommandTime;
 
-    private static class DarthVaderHandler extends Handler {
-
-        private final WeakReference<DarthVaderActivity> clientRef;
-
-        public DarthVaderHandler(DarthVaderActivity client) {
-            this.clientRef = new WeakReference<>(client);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            Log.d(TAG,"Time took for command: " + String.valueOf(System.currentTimeMillis()-mStartedCommand));
-            Bundle data = msg.getData();
-            DarthVaderActivity client = clientRef.get();
-            if (client != null && msg.what == EmpireService.CALLBACK_MSG && data != null) {
-                Toast.makeText(client, "Death Star deployed and ready for your command, my lord",
-                        Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
+    private EmpireServiceReceiver mEmpireServiceReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,23 +29,43 @@ public class DarthVaderActivity extends Activity implements View.OnClickListener
 
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        mEmpireServiceReceiver = new EmpireServiceReceiver();
+        IntentFilter intentFilter = new IntentFilter(
+                EmpireService.EMPIRE_SERVICE_ACTION);
+        registerReceiver(mEmpireServiceReceiver,intentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(mEmpireServiceReceiver);
+        super.onStop();
+    }
+
+    @Override
     public void onClick(View v) {
         Intent intent = new Intent(this, EmpireService.class);
-        Messenger messenger = new Messenger(new DarthVaderHandler(this));
-        intent.putExtra("ImperialMessenger", messenger);
         switch (v.getId()) {
             case R.id.iv_dva_build_death_star:
-                intent.putExtra("Command type",
+                intent.putExtra(EmpireService.COMMAND_TYPE_KEY,
                         EmpireService.EmpireServiceCommands.BUILD_DEATH_STAR);
                 break;
             case R.id.iv_dva_interact_with_luke:
-                intent.putExtra("Command type",
+                intent.putExtra(EmpireService.COMMAND_TYPE_KEY,
                         EmpireService.EmpireServiceCommands.FIND_LUKE);
                 break;
         }
-        mStartedCommand = System.currentTimeMillis();
+        mStartedCommandTime = System.currentTimeMillis();
         startService(intent);
     }
 
-
+    public class EmpireServiceReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG,"Time took: " +String.valueOf(System.currentTimeMillis()- mStartedCommandTime));
+            Toast.makeText(DarthVaderActivity.this, "Death Star deployed and ready for your command, my lord",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
 }

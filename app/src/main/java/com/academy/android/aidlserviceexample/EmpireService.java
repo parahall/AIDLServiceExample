@@ -2,14 +2,14 @@ package com.academy.android.aidlserviceexample;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
-import android.os.RemoteException;
 
 public class EmpireService extends Service {
 
+
+    public static final String COMMAND_TYPE_KEY = "Command type";
+    public static final String EMPIRE_SERVICE_ACTION
+            = "com.academy.android.aidlserviceexample.EMPIRE_SERVICE_ACTION";
 
     public static final int CALLBACK_MSG = 0;
 
@@ -25,9 +25,8 @@ public class EmpireService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Messenger messenger = intent.getParcelableExtra("ImperialMessenger");
         EmpireServiceCommands command = (EmpireServiceCommands) intent.getExtras()
-                .get("Command type");
+                .get(COMMAND_TYPE_KEY);
 
         switch (command) {
             case BUILD_DEATH_STAR:
@@ -39,20 +38,10 @@ public class EmpireService extends Service {
                         e.printStackTrace();
                     }
                 }
-
-                if (messenger != null) {
-                    Message message = Message.obtain();
-                    message.what = CALLBACK_MSG;
-                    Bundle data = new Bundle(1);
-                    data.putParcelable("result",
-                            new DeathStar(270000, 270000, "THIS IS THE BIG GUN"));
-                    message.setData(data);
-                    try {
-                        messenger.send(message);
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
-                }
+                Intent jobDoneIntent = new Intent(EMPIRE_SERVICE_ACTION);
+                jobDoneIntent.putExtra("result",
+                        new DeathStar(270000, 270000, "THIS IS THE BIG GUN"));
+                sendBroadcast(jobDoneIntent);
                 break;
             case FIND_LUKE:
 
