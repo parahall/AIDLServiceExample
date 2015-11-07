@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -13,6 +14,10 @@ import java.lang.ref.WeakReference;
 
 
 public class DarthVaderActivity extends Activity implements View.OnClickListener {
+
+    private static final String TAG = DarthVaderActivity.class.getSimpleName();
+
+    private static long mStartedCommand;
 
     private static class DarthVaderHandler extends Handler {
 
@@ -24,6 +29,7 @@ public class DarthVaderActivity extends Activity implements View.OnClickListener
 
         @Override
         public void handleMessage(Message msg) {
+            Log.d(TAG,"Time took for command: " + String.valueOf(System.currentTimeMillis()-mStartedCommand));
             Bundle data = msg.getData();
             DarthVaderActivity client = clientRef.get();
             if (client != null && msg.what == EmpireService.CALLBACK_MSG && data != null) {
@@ -58,6 +64,7 @@ public class DarthVaderActivity extends Activity implements View.OnClickListener
                         EmpireService.EmpireServiceCommands.FIND_LUKE);
                 break;
         }
+        mStartedCommand = System.currentTimeMillis();
         startService(intent);
     }
 
