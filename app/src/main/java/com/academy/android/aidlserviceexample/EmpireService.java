@@ -7,11 +7,14 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.util.Log;
 
 public class EmpireService extends Service {
 
 
     public static final int CALLBACK_MSG = 0;
+
+    private static final String TAG = EmpireService.class.getSimpleName();
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -25,6 +28,7 @@ public class EmpireService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "Arrived at: " + System.currentTimeMillis());
         Messenger messenger = intent.getParcelableExtra("ImperialMessenger");
         EmpireServiceCommands command = (EmpireServiceCommands) intent.getExtras()
                 .get("Command type");
@@ -48,6 +52,7 @@ public class EmpireService extends Service {
                             new DeathStar(270000, 270000, "THIS IS THE BIG GUN"));
                     message.setData(data);
                     try {
+                        Log.d(TAG, "Sending back at: " + System.currentTimeMillis());
                         messenger.send(message);
                     } catch (RemoteException e) {
                         e.printStackTrace();
@@ -57,7 +62,6 @@ public class EmpireService extends Service {
             case FIND_LUKE:
 
         }
-        stopSelf();
         return START_NOT_STICKY;
     }
 

@@ -17,8 +17,6 @@ public class DarthVaderActivity extends Activity implements View.OnClickListener
 
     private static final String TAG = DarthVaderActivity.class.getSimpleName();
 
-    private static long mStartedCommand;
-
     private static class DarthVaderHandler extends Handler {
 
         private final WeakReference<DarthVaderActivity> clientRef;
@@ -29,7 +27,7 @@ public class DarthVaderActivity extends Activity implements View.OnClickListener
 
         @Override
         public void handleMessage(Message msg) {
-            Log.d(TAG,"Time took for command: " + String.valueOf(System.currentTimeMillis()-mStartedCommand));
+            Log.d(TAG, "Arrived from service: "+System.currentTimeMillis());
             Bundle data = msg.getData();
             DarthVaderActivity client = clientRef.get();
             if (client != null && msg.what == EmpireService.CALLBACK_MSG && data != null) {
@@ -64,7 +62,7 @@ public class DarthVaderActivity extends Activity implements View.OnClickListener
                         EmpireService.EmpireServiceCommands.FIND_LUKE);
                 break;
         }
-        mStartedCommand = System.currentTimeMillis();
+        Log.d(TAG, "Started at: "+System.currentTimeMillis());
         startService(intent);
     }
 
